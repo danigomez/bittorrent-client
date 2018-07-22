@@ -1,10 +1,10 @@
-package torrent
+package file
 
 import (
 	"testing"
 )
 
-func TestNewTorrentFromString(t *testing.T) {
+func TestOpenFromFromString(t *testing.T) {
 	type testCase struct {
 		data     string
 		expected File
@@ -30,7 +30,7 @@ func TestNewTorrentFromString(t *testing.T) {
 
 	for _, test := range testCases {
 		var torrent File
-		torrent = NewTorrentFromString(test.data)
+		torrent = OpenFromString(test.data)
 
 		if torrent.Encoding != test.expected.Encoding {
 			t.Errorf("error: Encoding %s is not equal to %s", torrent.Encoding, test.expected.Encoding)

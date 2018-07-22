@@ -1,4 +1,4 @@
-package torrent
+package tracker
 
 import (
 	"testing"
@@ -21,7 +21,7 @@ func TestTrackerProtocolStructs(t *testing.T) {
 
 	var areq AnnounceRequest
 
-	if unsafe.Sizeof(areq) != 98 {
-		t.Errorf("error: AnnounceRequest has not the proper size %v => %v", 98, unsafe.Sizeof(areq))
+	if unsafe.Sizeof(areq) != 104 {
+		t.Errorf("error: AnnounceRequest has not the proper size %v => %v", 104, unsafe.Sizeof(areq))
 	}
 }
