@@ -1,47 +1,32 @@
 package torrent
 
 import (
+	"fmt"
+	"github.com/danigomez/bittorrent-client/torrent/network/broker"
 	"github.com/danigomez/bittorrent-client/torrent/network/tracker"
-	"log"
-	"net"
 )
 
-func ConnectToTracker(trackerUrl string) *tracker.ConnectResponse {
+func ConnectToTracker(trackerUrl string) (*tracker.ConnectResponse, error) {
 
-	connection, err := net.Dial("udp", trackerUrl)
-
-	defer connection.Close()
-
-	if err != nil {
-		log.Fatalf("error: there was an error while creating connection to %s, \n%s", trackerUrl, err)
-	}
-
-	request := tracker.NewConnectRequest()
-
-	encoded, err := request.Serialize()
-
-	_, err = connection.Write(encoded)
+	brokerClient := new(broker.UDPBroker)
+	data, err := tracker.NewConnectRequest().Serialize()
 
 	if err != nil {
-		log.Fatalf("error: there was an error sending UDP data to tracker \n%s", err)
+		return nil, fmt.Errorf("error: there was an error while serializing data %s, \n%s", trackerUrl, err)
 	}
 
-	buffer := make([]byte, 2048)
-
-	_, err = connection.Read(buffer)
-
-	if err != nil {
-		log.Fatalf("error: there was an error while reading UDP data from %s, \n%s", trackerUrl, err)
-	}
+	// Creates new request
+	request := broker.NewBrokerRequest(trackerUrl, data)
+	response, err := brokerClient.SendRequest(request)
 
 	ret := new(tracker.ConnectResponse)
 
-	err = ret.Deserialize(buffer)
+	err = ret.Deserialize(response)
 
 	if err != nil {
-		log.Fatalf("error: there was an error while deserializing data %s, \n%s", trackerUrl, err)
+		return nil, fmt.Errorf("error: there was an error while deserializing data %s, \n%s", trackerUrl, err)
 	}
 
-	return ret
+	return ret, nil
 
 }

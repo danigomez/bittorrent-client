@@ -66,7 +66,7 @@ func NewConnectRequest() ConnectRequest {
 	}
 }
 
-func (cr *ConnectRequest) Serialize() ([]byte, error) {
+func (cr ConnectRequest) Serialize() ([]byte, error) {
 	buffer := new(bytes.Buffer)
 
 	err := binary.Write(buffer, binary.BigEndian, cr)

@@ -6,7 +6,7 @@ import (
 )
 
 func TestConnectToTracker(t *testing.T) {
-	data := ConnectToTracker("tracker.internetwarriors.net:1337")
+	data, _ := ConnectToTracker("tracker.internetwarriors.net:1337")
 
 	if reflect.TypeOf(data.TransactionId).String() != "int32" {
 		t.Errorf("error: TransactionId is not int32")
@@ -23,4 +23,11 @@ func TestConnectToTracker(t *testing.T) {
 	if data.Action != 0 {
 		t.Errorf("error: Action is not equal to 0 (CONNECT)")
 	}
+
+	_, err := ConnectToTracker("satasa.com")
+
+	if err == nil {
+		t.Errorf("error: There should be an error when connecting to invalid URI")
+	}
+
 }
