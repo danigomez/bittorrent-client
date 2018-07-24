@@ -15,8 +15,8 @@ func TestTrackerProtocolStructs(t *testing.T) {
 
 	var cres ConnectResponse
 
-	if unsafe.Sizeof(cres) != 16 {
-		t.Errorf("error: ConnectResponse has not the proper size %v => %v", 16, unsafe.Sizeof(cres))
+	if unsafe.Sizeof(cres) != 24 {
+		t.Errorf("error: ConnectResponse has not the proper size %v => %v", 24, unsafe.Sizeof(cres))
 	}
 
 	var areq AnnounceRequest

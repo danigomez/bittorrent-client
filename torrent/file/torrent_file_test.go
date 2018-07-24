@@ -19,6 +19,7 @@ func TestOpenFromFromString(t *testing.T) {
 				1462355939,
 				"UTF-8",
 				info{
+					nil,
 					124234,
 					"puppy.jpg",
 					16384,
@@ -58,4 +59,84 @@ func TestOpenFromFromString(t *testing.T) {
 		}
 	}
 
+}
+
+func TestGetSizeWithOneFile(t *testing.T) {
+
+	file := File{
+		"udp://tracker.coppersurfer.tk:6969/announce",
+		"uTorrent/1870",
+		1462355939,
+		"UTF-8",
+		info{
+			nil,
+			124234,
+			"puppy.jpg",
+			16384,
+			`T�k�/�_(�S\\u0011h%���+]q\'B\\u0018�٠:����p\\"�j����1-g\\"\\u0018�s(\\u001b\\u000f���V��=�h�m\\u0017a�nF�2���N\\r�ǩ�_�\\u001e\\"2���\'�wO���-;\\u0004ע\\u0017�ؑ��L&����0\\u001f�D_9��\\t\\\\��O�h,n\\u001a5g�(��仑,�\\\\߰�%��U��\\u0019��C\\u0007>��df��`,
+		},
+	}
+
+	if int64(file.Info.Length) != file.getSize() {
+		t.Errorf("error: Size is not equal to %v", file.Info.Length)
+	}
+}
+
+func TestGetSizeWithMultipleFiles(t *testing.T) {
+
+	file := File{
+		"udp://tracker.coppersurfer.tk:6969/announce",
+		"uTorrent/1870",
+		1462355939,
+		"UTF-8",
+		info{
+			[]files{
+				{
+					124234,
+					"puppy.jpg",
+					16384,
+					`T�k�/�_(�S\\u0011h%���+]q\'B\\u0018�٠:����p\\"�j����1-g\\"\\u0018�s(\\u001b\\u000f���V��=�h�m\\u0017a�nF�2���N\\r�ǩ�_�\\u001e\\"2���\'�wO���-;\\u0004ע\\u0017�ؑ��L&����0\\u001f�D_9��\\t\\\\��O�h,n\\u001a5g�(��仑,�\\\\߰�%��U��\\u0019��C\\u0007>��df��`,
+				},
+				{
+					22221,
+					"frula.jpg",
+					16384,
+					`T�k�/�_(�S\\u0011h%���+]q\'B\\u0018�٠:����p\\"�j����1-g\\"\\u0018�s(\\u001b\\u000f���V��=�h�m\\u0017a�nF�2���N\\r�ǩ�_�\\u001e\\"2���\'�wO���-;\\u0004ע\\u0017�ؑ��L&����0\\u001f�D_9��\\t\\\\��O�h,n\\u001a5g�(��仑,�\\\\߰�%��U��\\u0019��C\\u0007>��df��`,
+				},
+			},
+			0,
+			"",
+			0,
+			"",
+		},
+	}
+
+	expected := int64(124234 + 22221)
+
+	if expected != file.getSize() {
+		t.Errorf("error: Size %v is not equal to %v", file.getSize(), expected)
+	}
+}
+
+func TestGetHash(t *testing.T) {
+	file := File{
+		"udp://tracker.coppersurfer.tk:6969/announce",
+		"uTorrent/1870",
+		1462355939,
+		"UTF-8",
+		info{
+			nil,
+			124234,
+			"puppy.jpg",
+			16384,
+			`T�k�/�_(�S\\u0011h%���+]q\'B\\u0018�٠:����p\\"�j����1-g\\"\\u0018�s(\\u001b\\u000f���V��=�h�m\\u0017a�nF�2���N\\r�ǩ�_�\\u001e\\"2���\'�wO���-;\\u0004ע\\u0017�ؑ��L&����0\\u001f�D_9��\\t\\\\��O�h,n\\u001a5g�(��仑,�\\\\߰�%��U��\\u0019��C\\u0007>��df��`,
+		},
+	}
+
+	hash, err := file.getInfoHash()
+
+	if err != nil {
+		t.Errorf("error: There was an error while getting info hash %s", err)
+	}
+	t.Logf("SHA-1 %v", hash)
 }

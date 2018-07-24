@@ -10,7 +10,17 @@ import (
 /* BEP 15 */
 
 const protocolId = 0x41727101980
-const actionConnect = 0
+
+const (
+	actionConnect = iota
+	actionAnnounce
+)
+
+const (
+	eventNone = iota
+	eventCompleted
+	eventStarted
+)
 
 // 16 bytes
 type ConnectRequest struct {
@@ -66,6 +76,25 @@ func NewConnectRequest() ConnectRequest {
 	}
 }
 
+func NewAnnounceRequest(connectionId int64, infoHash [20]byte, peerId [20]byte, port int16) AnnounceRequest {
+	rand.Seed(time.Now().UnixNano())
+	return AnnounceRequest{
+		connectionId,
+		actionAnnounce,
+		rand.Int31(),
+		infoHash, // SHA-1 of info dict from torrent file
+		peerId,
+		0,
+		1,
+		0,
+		eventNone,
+		0,
+		rand.Int31(),
+		-1,
+		port,
+	}
+}
+
 func (cr ConnectRequest) Serialize() ([]byte, error) {
 	buffer := new(bytes.Buffer)
 
@@ -79,4 +108,12 @@ func (cr *ConnectResponse) Deserialize(data []byte) error {
 	err := binary.Read(buf, binary.BigEndian, cr)
 
 	return err
+}
+
+func (ar AnnounceRequest) Serialize() ([]byte, error) {
+	buffer := new(bytes.Buffer)
+
+	err := binary.Write(buffer, binary.BigEndian, ar)
+
+	return buffer.Bytes(), err
 }
