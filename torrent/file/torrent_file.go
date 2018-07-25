@@ -58,7 +58,7 @@ func parseTorrentData(torrent []byte) File {
 
 }
 
-func (file File) getInfoHash() ([20]byte, error) {
+func (file File) GetInfoHash() ([20]byte, error) {
 	rawInfo, err := bencode.EncodeBytes(file.Info)
 
 	if err != nil {
@@ -68,7 +68,7 @@ func (file File) getInfoHash() ([20]byte, error) {
 	return sha1.Sum(rawInfo), nil
 }
 
-func (file File) getSize() int64 {
+func (file File) GetSize() int64 {
 	infoData := file.Info
 
 	if infoData.Length > 0 {

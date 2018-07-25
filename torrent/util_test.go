@@ -4,7 +4,7 @@ import "testing"
 
 func TestGetId(t *testing.T) {
 
-	testNames := []string {
+	testNames := []string{
 		"-BBV01-",
 		"-BBV010-",
 		"-BBV0100-",
@@ -28,7 +28,6 @@ func TestGetId(t *testing.T) {
 		if len(id) != 20 {
 			t.Errorf("error: Id is not generated with the correct len it should be 20, and is %v", len(id))
 		}
-
 
 	}
 

@@ -8,7 +8,9 @@ import (
 
 const maxIdSize = 20
 
-func GetId(clientName string) []byte {
+func GetId(clientName string) [20]byte {
+
+	var ret [20]byte
 
 	length := len(clientName)
 	if length > maxIdSize {
@@ -21,5 +23,7 @@ func GetId(clientName string) []byte {
 
 	rand.Read(id)
 
-	return append([]byte(clientName), id[length:]...)
+	copy(ret[:], append([]byte(clientName), id[length:]...))
+
+	return ret
 }

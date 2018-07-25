@@ -32,8 +32,8 @@ type ConnectRequest struct {
 // 16 bytes
 type ConnectResponse struct {
 	Action        int32 // offset: 0
-	ConnectionId  int64 // offset: 8
 	TransactionId int32 // offset: 4
+	ConnectionId  int64 // offset: 8
 }
 
 // 98 bytes
@@ -59,7 +59,7 @@ type AnnounceResponse struct {
 	Interval      int32
 	Leechers      int32
 	Seeders       int32
-	Addresses     []peerAddress
+	// Addresses     []peerAddress
 }
 
 type peerAddress struct {
@@ -76,7 +76,7 @@ func NewConnectRequest() ConnectRequest {
 	}
 }
 
-func NewAnnounceRequest(connectionId int64, infoHash [20]byte, peerId [20]byte, port int16) AnnounceRequest {
+func NewAnnounceRequest(connectionId int64, infoHash [20]byte, peerId [20]byte, size int64, port int16) AnnounceRequest {
 	rand.Seed(time.Now().UnixNano())
 	return AnnounceRequest{
 		connectionId,
@@ -85,7 +85,7 @@ func NewAnnounceRequest(connectionId int64, infoHash [20]byte, peerId [20]byte, 
 		infoHash, // SHA-1 of info dict from torrent file
 		peerId,
 		0,
-		1,
+		size,
 		0,
 		eventNone,
 		0,
@@ -116,4 +116,11 @@ func (ar AnnounceRequest) Serialize() ([]byte, error) {
 	err := binary.Write(buffer, binary.BigEndian, ar)
 
 	return buffer.Bytes(), err
+}
+
+func (ar *AnnounceResponse) Deserialize(data []byte) error {
+	buf := bytes.NewReader(data)
+	err := binary.Read(buf, binary.BigEndian, ar)
+
+	return err
 }

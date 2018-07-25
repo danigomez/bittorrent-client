@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/danigomez/bittorrent-client/torrent/network/broker"
 	"github.com/danigomez/bittorrent-client/torrent/network/tracker"
+	"net/url"
+	"strconv"
 )
 
 func ConnectToTracker(trackerUrl string) (*tracker.ConnectResponse, error) {
@@ -35,12 +37,14 @@ func ConnectToTracker(trackerUrl string) (*tracker.ConnectResponse, error) {
 
 }
 
-/*
-
-func AnnounceToTracker(trackerUrl string) (*tracker.AnnounceResponse, error) {
+func AnnounceToTracker(trackerUrl string, connectionId int64, infoHash [20]byte, peerId [20]byte, size int64) (*tracker.AnnounceResponse, error) {
 
 	brokerClient := new(broker.UDPBroker)
-	data, err := tracker.NewAnnounceRequest().Serialize()
+
+	parsedUrl, _ := url.Parse(trackerUrl)
+	port, _ := strconv.Atoi(parsedUrl.Port())
+
+	data, err := tracker.NewAnnounceRequest(connectionId, infoHash, peerId, size, int16(port)).Serialize()
 
 	if err != nil {
 		return nil, fmt.Errorf("error: there was an error while serializing data %s, \n%s", trackerUrl, err)
@@ -48,7 +52,7 @@ func AnnounceToTracker(trackerUrl string) (*tracker.AnnounceResponse, error) {
 
 	// Creates new request
 	request := broker.NewBrokerRequest(trackerUrl, data)
-	_, err = brokerClient.SendRequest(request)
+	response, err := brokerClient.SendRequest(request)
 
 	if err != nil {
 		return nil, fmt.Errorf("error: there was an error sending announce request to tracker %s, \n%s", trackerUrl, err)
@@ -64,4 +68,3 @@ func AnnounceToTracker(trackerUrl string) (*tracker.AnnounceResponse, error) {
 	return ret, nil
 
 }
-*/

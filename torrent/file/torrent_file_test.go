@@ -77,7 +77,7 @@ func TestGetSizeWithOneFile(t *testing.T) {
 		},
 	}
 
-	if int64(file.Info.Length) != file.getSize() {
+	if int64(file.Info.Length) != file.GetSize() {
 		t.Errorf("error: Size is not equal to %v", file.Info.Length)
 	}
 }
@@ -113,8 +113,8 @@ func TestGetSizeWithMultipleFiles(t *testing.T) {
 
 	expected := int64(124234 + 22221)
 
-	if expected != file.getSize() {
-		t.Errorf("error: Size %v is not equal to %v", file.getSize(), expected)
+	if expected != file.GetSize() {
+		t.Errorf("error: Size %v is not equal to %v", file.GetSize(), expected)
 	}
 }
 
@@ -133,7 +133,7 @@ func TestGetHash(t *testing.T) {
 		},
 	}
 
-	hash, err := file.getInfoHash()
+	hash, err := file.GetInfoHash()
 
 	if err != nil {
 		t.Errorf("error: There was an error while getting info hash %s", err)
