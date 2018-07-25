@@ -26,11 +26,12 @@ func (broker *UDPBroker) SendRequest(request Request) ([]byte, error) {
 
 	buffer := make([]byte, 2048)
 
-	_, err = connection.Read(buffer)
+	read, err := connection.Read(buffer)
 
 	if err != nil {
 		return nil, fmt.Errorf("error: there was an error while reading UDP data from %s, \n%s", request.address, err)
 	}
 
-	return buffer, nil
+	// Truncate the buffer to the read size
+	return buffer[:read], nil
 }

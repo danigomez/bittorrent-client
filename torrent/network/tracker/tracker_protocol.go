@@ -3,6 +3,7 @@ package tracker
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -59,7 +60,7 @@ type AnnounceResponse struct {
 	Interval      int32
 	Leechers      int32
 	Seeders       int32
-	// Addresses     []peerAddress
+	Addresses     []peerAddress
 }
 
 type peerAddress struct {
@@ -119,8 +120,64 @@ func (ar AnnounceRequest) Serialize() ([]byte, error) {
 }
 
 func (ar *AnnounceResponse) Deserialize(data []byte) error {
+	dataLen := len(data)
 	buf := bytes.NewReader(data)
-	err := binary.Read(buf, binary.BigEndian, ar)
 
-	return err
+	err := binary.Read(buf, binary.BigEndian, &ar.Action)
+
+	if err != nil {
+		return fmt.Errorf("error: There was an error deserializing Action field \n%s", err)
+	}
+
+	err = binary.Read(buf, binary.BigEndian, &ar.TransactionId)
+
+	if err != nil {
+		return fmt.Errorf("error: There was an error deserializing TransactionId field \n%s", err)
+	}
+
+	err = binary.Read(buf, binary.BigEndian, &ar.Interval)
+
+	if err != nil {
+		return fmt.Errorf("error: There was an error deserializing Interval field \n%s", err)
+	}
+
+	err = binary.Read(buf, binary.BigEndian, &ar.Leechers)
+
+	if err != nil {
+		return fmt.Errorf("error: There was an error deserializing Leechers field \n%s", err)
+	}
+
+	err = binary.Read(buf, binary.BigEndian, &ar.Seeders)
+
+	if err != nil {
+		return fmt.Errorf("error: There was an error deserializing Seeders field \n%s", err)
+	}
+
+	if dataLen > 20 {
+		extraBuf := bytes.NewReader(data[20:])
+
+		// If there is more that 20 bytes, then there is peer data,
+		// Each peer is grouped in a 6 byte block
+		peersCount := (dataLen - 20) / 6
+
+		for i := 0; i < peersCount; i++ {
+			var address int32
+			var port int16
+			err = binary.Read(extraBuf, binary.BigEndian, &address)
+
+			if err != nil {
+				return fmt.Errorf("error: There was an error deserializing Address field \n%s", err)
+			}
+
+			err = binary.Read(extraBuf, binary.BigEndian, &port)
+			if err != nil {
+				return fmt.Errorf("error: There was an error deserializing Port field \n%s", err)
+
+			}
+			ar.Addresses = append(ar.Addresses, peerAddress{address, port})
+
+		}
+	}
+
+	return nil
 }
