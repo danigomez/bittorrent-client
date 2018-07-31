@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func ConnectToTracker(trackerUrl string) (*tracker.ConnectResponse, error) {
+func SendConnectRequest(trackerUrl string) (*tracker.ConnectResponse, error) {
 
 	brokerClient := new(broker.UDPBroker)
 	data, err := tracker.NewConnectRequest().Serialize()
@@ -37,7 +37,7 @@ func ConnectToTracker(trackerUrl string) (*tracker.ConnectResponse, error) {
 
 }
 
-func AnnounceToTracker(trackerUrl string, connectionId int64, infoHash [20]byte, peerId [20]byte, size int64) (*tracker.AnnounceResponse, error) {
+func SendAnnounceRequest(trackerUrl string, connectionId int64, infoHash [20]byte, peerId [20]byte, size int64) (*tracker.AnnounceResponse, error) {
 
 	brokerClient := new(broker.UDPBroker)
 
