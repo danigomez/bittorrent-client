@@ -1,4 +1,4 @@
-package torrent
+package tracker
 
 import (
 	"fmt"
@@ -41,7 +41,12 @@ func SendAnnounceRequest(trackerUrl string, connectionId int64, infoHash [20]byt
 
 	brokerClient := new(broker.UDPBroker)
 
-	parsedUrl, _ := url.Parse(trackerUrl)
+	parsedUrl, err := url.Parse(trackerUrl)
+
+	if err != nil {
+		return nil, fmt.Errorf("error: there was an error while parsing tracker URL %s, \n%s", trackerUrl, err)
+	}
+
 	port, _ := strconv.Atoi(parsedUrl.Port())
 
 	data, err := tracker.NewAnnounceRequest(connectionId, infoHash, peerId, size, int16(port)).Serialize()

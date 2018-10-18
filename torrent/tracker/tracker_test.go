@@ -1,6 +1,7 @@
-package torrent
+package tracker
 
 import (
+	"github.com/danigomez/bittorrent-client/torrent"
 	"github.com/danigomez/bittorrent-client/torrent/file"
 	"reflect"
 	"testing"
@@ -41,7 +42,7 @@ func TestAnnounceToTracker(t *testing.T) {
 
 	connectionId := connect.ConnectionId
 	hash, _ := f.GetInfoHash()
-	id := GetId("-BBV001-")
+	id := torrent.GetId("-BBV001-")
 	size := f.GetSize()
 
 	_, err := SendAnnounceRequest(trackerUrl, connectionId, hash, id, size)
